@@ -1,0 +1,28 @@
+name: Deploy Frontend
+
+# Деплоит статический HTML-интерфейс (frontend/index.html) на Cloudflare
+# Pages при пуше в main. Никакой сборки — файл публикуется как есть.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Frontend
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy frontend --project-name=dark-minimal-pulse

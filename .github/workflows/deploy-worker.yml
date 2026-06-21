@@ -1,0 +1,28 @@
+name: Deploy Worker
+
+# Деплоит бэкенд (worker/) при пуше в main. Использует официальный
+# cloudflare/wrangler-action — сейчас это единая рекомендованная Cloudflare
+# Action и для Workers, и для Pages (старый cloudflare/pages-action
+# официально устарел).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/deploy-worker.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Worker
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: deploy

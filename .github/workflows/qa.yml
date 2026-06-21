@@ -1,0 +1,49 @@
+name: QA
+
+# Закрывает "Autonomous QA" из роадмапа честным способом: не рой ИИ-агентов,
+# которые сами всё проверяют, а обычный CI-гейт, который реально блокирует
+# мердж, если что-то ломается. 90% пользы за 5% сложности.
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install root deps
+        run: npm ci
+
+      - name: Install worker deps
+        run: npm --prefix worker ci
+
+      - name: Typecheck (apps/main)
+        run: npm --prefix apps/main run typecheck --if-present
+
+      - name: Lint (apps/main)
+        run: npm --prefix apps/main run lint --if-present
+
+      - name: Unit tests (worker)
+        run: npm --prefix worker test --if-present
+
+      - name: Unit tests (apps/main)
+        run: npm --prefix apps/main test --if-present
+
+      - name: Build + bundle size budget
+        run: |
+          npm --prefix apps/main run build
+          SIZE_KB=$(du -sk apps/main/dist | cut -f1)
+          echo "Bundle size: ${SIZE_KB}KB"
+          # Текущий бандл ~174KB после code-splitting — берём бюджет 350KB,
+          # чтобы было место на рост, но регрессия не проходила незамеченной.
+          if [ "$SIZE_KB" -gt 350 ]; then
+            echo "::error::Bundle exceeds 350KB budget (got ${SIZE_KB}KB)"
+            exit 1
+          fi

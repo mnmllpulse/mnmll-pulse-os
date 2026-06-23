@@ -438,7 +438,7 @@ pre.termux{background:#000;padding:1rem;border-radius:0;overflow-x:auto;font-siz
       <tr><th style="text-align:left;padding:.4rem .5rem;color:var(--acc2);border-bottom:1px solid var(--bord)">Secret</th><th style="text-align:left;padding:.4rem .5rem;color:var(--acc2);border-bottom:1px solid var(--bord)">Описание</th></tr>
       <tr><td style="padding:.35rem .5rem;color:#C4B5FD;font-family:'JetBrains Mono',monospace;font-size:.68rem">CF_API_TOKEN</td><td style="padding:.35rem .5rem;color:var(--dim)">Cloudflare API Token (Edit Pages + Workers)</td></tr>
       <tr><td style="padding:.35rem .5rem;color:#C4B5FD;font-family:'JetBrains Mono',monospace;font-size:.68rem">CF_ACCOUNT_ID</td><td style="padding:.35rem .5rem;color:var(--dim)">Cloudflare Account ID</td></tr>
-      <tr><td style="padding:.35rem .5rem;color:#C4B5FD;font-family:'JetBrains Mono',monospace;font-size:.68rem">VITE_WORKER_URL</td><td style="padding:.35rem .5rem;color:var(--dim)">https://mnmll-pulse-core.mnmllpulse.workers.dev</td></tr>
+      <tr><td style="padding:.35rem .5rem;color:#C4B5FD;font-family:'JetBrains Mono',monospace;font-size:.68rem">VITE_WORKER_URL</td><td style="padding:.35rem .5rem;color:var(--dim)">https://mnmll-pulse-os.mnmllpulse.workers.dev</td></tr>
     </table>
   </div>
   <div class="gp" style="margin-bottom:1rem">
@@ -558,7 +558,7 @@ function goPage(id,btn){
 // Все обращения к AI и к рою агентов идут через РЕАЛЬНЫЙ Cloudflare Worker
 // (mnmll-pulse-core), а не напрямую в Anthropic из браузера — ключ остаётся
 // на сервере, как и положено. Если адрес воркера другой — поменяй здесь.
-const PULSE_API='https://mnmll-pulse-core.mnmllpulse.workers.dev';
+const PULSE_API='https://mnmll-pulse-os.mnmllpulse.workers.dev';
 
 // FIX H2: общий хелпер с таймаутом — раньше fetch мог зависнуть навечно
 async function fetchWithTimeout(url,opts={},ms=20000){
@@ -1153,7 +1153,7 @@ function downloadTermux(){dlFile('setup-pulse-os.sh',TERMUX_SCRIPT);}
 // ── FILE CONTENTS ─────────────────────────────────────────
 const ZIP_FILES={
   '.gitignore':`node_modules/\n.env\n.env.local\n.env.production\napps/main/.env\napps/labs/.env\nworker/.env\ndist/\nbuild/\n.vite/\n.wrangler/\n.DS_Store\nThumbs.db\n*.log`,
-  '.env.example':`# Dark Mnmll Pulse OS v14.0 — Environment Variables\nVITE_WORKER_URL=https://mnmll-pulse-core.mnmllpulse.workers.dev\nVITE_APP_DOMAIN=mnmllpulse.com\nVITE_LABS_URL=https://pulse-labs.org\n\n# Worker Secrets — wrangler secret put KEY_NAME\n# Отдельные ключи провайдеров (Anthropic/OpenAI/Gemini) НЕ нужны —\n# вызовы идут через env.AI.run() и Cloudflare AI Gateway Unified Billing.\n# Перед первым деплоем: AI Gateway → Credits Available → привязать карту.\n# STRIPE_SECRET=sk_live_...\n# STRIPE_WEBHOOK_SECRET=whsec_...\n# NEXUS_API_KEY=your-key\n# SECRET_KEY=your-jwt-secret`,
+  '.env.example':`# Dark Mnmll Pulse OS v14.0 — Environment Variables\nVITE_WORKER_URL=https://mnmll-pulse-os.mnmllpulse.workers.dev\nVITE_APP_DOMAIN=mnmllpulse.com\nVITE_LABS_URL=https://pulse-labs.org\n\n# Worker Secrets — wrangler secret put KEY_NAME\n# Отдельные ключи провайдеров (Anthropic/OpenAI/Gemini) НЕ нужны —\n# вызовы идут через env.AI.run() и Cloudflare AI Gateway Unified Billing.\n# Перед первым деплоем: AI Gateway → Credits Available → привязать карту.\n# STRIPE_SECRET=sk_live_...\n# STRIPE_WEBHOOK_SECRET=whsec_...\n# NEXUS_API_KEY=your-key\n# SECRET_KEY=your-jwt-secret`,
   'package.json':`{\n  "name": "dark-planet-os",\n  "version": "14.0.0",\n  "private": true,\n  "description": "Dark Mnmll Pulse OS — Intelligence That Moves the Planet",\n  "license": "UNLICENSED",\n  "workspaces": ["apps/*", "worker"],\n  "scripts": {\n    "dev:main": "npm run dev --workspace=apps/main",\n    "dev:labs": "npm run dev --workspace=apps/labs",\n    "dev:worker": "npm run dev --workspace=worker",\n    "build:all": "npm run build --workspaces",\n    "deploy:all": "bash scripts/deploy-all.sh"\n  }\n}`,
   'README.md':`# DARK MNMLL PULSE OS v14.0\n\n> Intelligence That Moves the Planet.\n\n© 2026 Dark Mnmll Pulse OS\n\n## Domains\n- mnmllpulse.com\n- pulse-labs.org\n\n## Quick Start\n\`\`\`bash\nbash scripts/setup.sh\nbash scripts/deploy-all.sh\n\`\`\`\n\n## GitHub Secrets\n- CF_API_TOKEN\n- CF_ACCOUNT_ID\n- VITE_WORKER_URL`,
   'MANIFEST.md':`# DARK MNMLL PULSE OS — OPERATIONAL MANIFEST v14.0\n\n© 2026 Dark Mnmll Pulse OS. ALL RIGHTS RESERVED.\nPrivate Property. Intelligence That Moves the Planet.\n\n## DOMAINS\n- mnmllpulse.com (main platform)\n- pulse-labs.org (experimental lab)\n\n## LAWS FOR TEAM\n1. API keys ONLY in Worker secrets — never in client code\n2. httpOnly cookies for auth — no localStorage\n3. .env NEVER in Git\n4. Code review before merge to main\n5. Design freeze: #0A0A0A bg / #7C3AED accent (10% rule) / brutalist black & white / Space Grotesk + JetBrains Mono\n\n## CONTACTS\n- legal@mnmllpulse.com\n- support@mnmllpulse.com\n- dev@mnmllpulse.com`,

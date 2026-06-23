@@ -32,3 +32,6 @@ max_retries = 3
 APP_URL = "https://mnmllpulse.com"
 APP_VERSION = "14.3.0"
 CORS_ORIGIN = "https://mnmllpulse.com,https://pulse-labs.org,https://mnmll-pulse-os.mnmllpulse.workers.dev"
+
+[assets]
+directory = "./frontend"
